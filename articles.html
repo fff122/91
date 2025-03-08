@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文章列表 - 王导鸡的博客</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* 文章列表页特定样式 */
+        .articles-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .articles-header {
+            margin-bottom: 30px;
+        }
+        
+        .filter-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+            background-color: #1c1c1c;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        
+        .filter-group {
+            display: flex;
+            align-items: center;
+            margin: 5px 10px 5px 0;
+        }
+        
+        .filter-label {
+            margin-right: 10px;
+            color: #999;
+        }
+        
+        .filter-select {
+            padding: 8px 10px;
+            background-color: #2c2c2c;
+            border: none;
+            border-radius: 3px;
+            color: #f1f1f1;
+            cursor: pointer;
+        }
+        
+        .search-filter {
+            display: flex;
+            margin: 5px 0;
+        }
+        
+        .search-filter input {
+            padding: 8px 10px;
+            background-color: #2c2c2c;
+            border: none;
+            border-radius: 3px 0 0 3px;
+            color: #f1f1f1;
+        }
+        
+        .search-filter button {
+            padding: 8px 15px;
+            background-color: #ff9000;
+            border: none;
+            color: #000;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 0 3px 3px 0;
+        }
+        
+        .articles-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .article-item {
+            background-color: #1c1c1c;
+            border-radius: 5px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            border-left: 3px solid #ff9000;
+            transition: transform 0.3s ease;
+        }
+        
+        .article-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(255, 144, 0, 0.2);
+        }
+        
+        .article-content {
+            padding: 20px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .article-meta {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        
+        .article-category {
+            background-color: #2c2c2c;
+            color: #ff9000;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+        }
+        
+        .article-date {
+            color: #999;
+            font-size: 14px;
+        }
+        
+        .article-title {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+            color: #f1f1f1;
+        }
+        
+        .article-title a {
+            color: #f1f1f1;
+            transition: color 0.3s ease;
+        }
+        
+        .article-title a:hover {
+            color: #ff9000;
+        }
+        
+        .article-excerpt {
+            color: #b0b0b0;
+            margin-bottom: 15px;
+            flex-grow: 1;
+        }
+        
+        .article-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .article-stats {
+            color: #999;
+            font-size: 14px;
+            display: flex;
+            gap: 15px;
+        }
+        
+        .article-likes {
+            color: #ff9000;
+        }
+        
+        .read-more {
+            color: #ff9000;
+            font-weight: bold;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .read-more:hover {
+            text-decoration: underline;
+        }
+        
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 40px;
+        }
+        
+        .pagination-btn {
+            padding: 8px 15px;
+            margin: 0 5px;
+            background-color: #2c2c2c;
+            border: none;
+            color: #f1f1f1;
+            border-radius: 3px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .pagination-btn:hover,
+        .pagination-btn.active {
+            background-color: #ff9000;
+            color: #000;
+        }
+        
+        .pagination-btn.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .pagination-btn.disabled:hover {
+            background-color: #2c2c2c;
+            color: #f1f1f1;
+        }
+        
+        .tags-filter {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        .tag-filter {
+            background-color: #2c2c2c;
+            color: #f1f1f1;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .tag-filter:hover,
+        .tag-filter.active {
+            background-color: #ff9000;
+            color: #000;
+        }
+        
+        @media (max-width: 768px) {
+            .filter-container {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .filter-group {
+                margin-bottom: 10px;
+            }
+            
+            .search-filter {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo-container">
+            <h1 class="logo"><a href="index.html">王导鸡博客</a></h1>
+        </div>
+        <div class="search-container">
+            <input type="text" placeholder="搜索博客内容...">
+            <button>搜索</button>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="index.html">首页</a></li>
+                <li><a href="articles.html" class="active">文章</a></li>
+                <li><a href="gallery.html">鹿关相册</a></li>
+                <li><a href="about.html">关于我</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="articles-container">
+        <div class="articles-header">
+            <h1>文章列表</h1>
+            <p>这里收集了我所有关于鹿关的文章，可以通过分类、标签或搜索快速找到感兴趣的内容。</p>
+        </div>
+        
+        <div class="filter-container">
+            <div class="filter-group">
+                <span class="filter-label">分类:</span>
+                <select class="filter-select" id="category-filter">
+                    <option value="all">全部分类</option>
+                    <option value="travel">旅行日记</option>
+                    <option value="photography">摄影技巧</option>
+                    <option value="nature">自然观察</option>
+                    <option value="food">美食推荐</option>
+                    <option value="guide">旅游指南</option>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <span class="filter-label">排序:</span>
+                <select class="filter-select" id="sort-filter">
+                    <option value="newest">最新发布</option>
+                    <option value="oldest">最早发布</option>
+                    <option value="popular">最受欢迎</option>
+                    <option value="views">浏览最多</option>
+                </select>
+            </div>
+            
+            <div class="search-filter">
+                <input type="text" placeholder="在文章中搜索..." id="article-search">
+                <button id="search-btn">搜索</button>
+            </div>
+        </div>
+        
+        <div class="tags-filter">
+            <span class="tag-filter active" data-tag="all">全部</span>
+            <span class="tag-filter" data-tag="鹿关">鹿关</span>
+            <span class="tag-filter" data-tag="摄影">摄影</span>
+            <span class="tag-filter" data-tag="旅游">旅游</span>
+            <span class="tag-filter" data-tag="徒步">徒步</span>
+            <span class="tag-filter" data-tag="美食">美食</span>
+            <span class="tag-filter" data-tag="住宿">住宿</span>
+            <span class="tag-filter" data-tag="野生动物">野生动物</span>
+            <span class="tag-filter" data-tag="季节">季节</span>
+            <span class="tag-filter" data-tag="自然保护">自然保护</span>
+        </div>
+        
+        <div class="articles-list">
+            <article class="article-item" data-tags="鹿关,自然保护区,徒步旅行,野生动物摄影,旅游指南">
+                <div class="article-content">
+                    <div class="article-meta">
+                        <span class="article-category">旅行日记</span>
+                        <span class="article-date">2023-10-15</span>
+                    </div>
+                    <h2 class="article-title"><a href="article.html">鹿关自然保护区之旅</a></h2>
+                    <p class="article-excerpt">鹿关自然保护区是我最喜爱的地方之一，每年我都会去几次，每次都有不同的体验和发现。这篇文章我想分享我最近一次的探访经历，以及一些实用的小贴士给那些计划去鹿关的朋友们。</p>
+                    <div class="article-footer">
+                        <div class="article-stats">
+                            <span class="article-views">1.2万 浏览</span>
+                            <span class="article-likes">98% 推荐</span>
+                        </div>
+                        <a href="article.html" class="read-more">阅读全文 &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="article-item" data-tags="鹿关,摄影,技巧,野生动物摄影,设备">
+                <div class="article-content">
+                    <div class="article-meta">
+                        <span class="article-category">摄影技巧</span>
+                        <span class="article-date">2023-09-22</span>
+                    </div>
+                    <h2 class="article-title"><a href="article-photo-tips.html">鹿关摄影技巧分享</a></h2>
+                    <p class="article-excerpt">在鹿关拍摄野生动物和风景需要一些特殊的技巧，本文将分享我多年的摄影经验，包括如何在不同光线条件下拍摄、选择合适的设备以及寻找最佳拍摄角度等方面的建议。无论你是摄影新手还是有经验的摄影师，这些tips都能帮助你拍出更好的鹿关照片。</p>
+                    <div class="article-footer">
+                        <div class="article-stats">
+                            <span class="article-views">8.5千 浏览</span>
+                            <span class="article-likes">95% 推荐</span>
+                        </div>
+                        <a href="article-photo-tips.html" class="read-more">阅读全文 &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="article-item" data-tags="鹿关,季节,风景,自然,摄影">
+                <div class="article-content">
+                    <div class="article-meta">
+                        <span class="article-category">自然观察</span>
+                        <span class="article-date">2023-08-17</span>
+                    </div>
+                    <h2 class="article-title"><a href="#">最美的鹿关季节</a></h2>
+                    <p class="article-excerpt">鹿关一年四季各有特色，什么时候去最好？这篇文章带你了解不同季节的鹿关风光，从春天的百花争艳到冬天的皑皑白雪，每个季节都有其独特的美丽和观赏重点。我会详细介绍每个季节的气候特点、可观赏的景观和野生动物，以及最适合的摄影主题，帮助你规划一次完美的鹿关之旅。</p>
+                    <div class="article-footer">
+                        <div class="article-stats">
+                            <span class="article-views">6.7千 浏览</span>
+                            <span class="article-likes">97% 推荐</span>
+                        </div>
+                        <a href="#" class="read-more">阅读全文 &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="article-item" data-tags="鹿关,美食,推荐,旅游,当地特色">
+                <div class="article-content">
+                    <div class="article-meta">
+                        <span class="article-category">美食推荐</span>
+                        <span class="article-date">2023-07-30</span>
+                    </div>
+                    <h2 class="article-title"><a href="#">鹿关美食推荐</a></h2>
+                    <p class="article-excerpt">游览鹿关之后，品尝当地美食是不可错过的体验，这里有我最推荐的几家餐厅。鹿关周边的小镇以其新鲜的山野菜和河鲜闻名，本文将介绍几家我多年来一直光顾的餐厅，分享它们的招牌菜品和就餐tips。无论你是喜欢正宗的当地农家菜，还是精致的创新料理，都能在这里找到满足口腹之欲的好去处。</p>
+                    <div class="article-footer">
+                        <div class="article-stats">
+                            <span class="article-views">5.3千 浏览</span>
+                            <span class="article-likes">94% 推荐</span>
+                        </div>
+                        <a href="#" class="read-more">阅读全文 &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="article-item" data-tags="鹿关,季节,自然,摄影,变化">
+                <div class="article-content">
+                    <div class="article-meta">
+                        <span class="article-category">自然观察</span>
+                        <span class="article-date">2023-06-14</span>
+                    </div>
+                    <h2 class="article-title"><a href="#">鹿关的四季变化</a></h2>
+                    <p class="article-excerpt">从春天的新芽到冬天的积雪，记录下鹿关一年的变化，欣赏大自然的神奇魔法。这篇文章是我持续四年的观察记录，通过同一地点不同季节的照片对比，展示了鹿关惊人的自然变化。我会讲述每个季节里动植物的生态变化，以及它们如何适应环境，这些观察或许能让你对自然生态有更深的理解。</p>
+                    <div class="article-footer">
+                        <div class="article-stats">
+                            <span class="article-views">3.2千 浏览</span>
+                            <span class="article-likes">92% 推荐</span>
+                        </div>
+                        <a href="#" class="read-more">阅读全文 &rarr;</a>
+                    </div>
+                </div>
+            </article>
+            
+            <article class="article-item" data-tags="鹿关,旅行,故事,个人,经历">
+                <div class="article-content">
+                    <div class="article-meta">
+                        <span class="article-category">旅行日记</span>
+                        <span class="article-date">2023-05-08</span>
+                    </div>
+                    <h2 class="article-title"><a href="#">我和鹿关的故事</a></h2>
+                    <p class="article-excerpt">第一次遇见鹿关是在十年前的一个夏天，从此我便与这个地方结下了不解之缘。这是一篇非常个人化的文章，记录了我与鹿关的十年情缘。从第一次偶然造访，到后来决定辞职成为自由摄影师并长期居住在这里，鹿关如何改变了我的生活轨迹和价值观。这也是一篇献给所有对自然心怀敬畏之人的文章。</p>
+                    <div class="article-footer">
+                        <div class="article-stats">
+                            <span class="article-views">4.8千 浏览</span>
+                            <span class="article-likes">99% 推荐</span>
+                        </div>
+                        <a href="#" class="read-more">阅读全文 &rarr;</a>
+                    </div>
+                </div>
+            </article>
+        </div>
+        
+        <div class="pagination">
+            <button class="pagination-btn disabled">&laquo; 上一页</button>
+            <button class="pagination-btn active">1</button>
+            <button class="pagination-btn">2</button>
+            <button class="pagination-btn">3</button>
+            <button class="pagination-btn">下一页 &raquo;</button>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>关于博客</h3>
+                <p>这是王导鸡的个人博客，专注于分享鹿关的美景和相关经历。</p>
+            </div>
+            <div class="footer-section">
+                <h3>联系方式</h3>
+                <p>邮箱: 230299514@qq.com</p>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>&copy; 2023 王导鸡的博客 | 保留所有权利</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script src="articles.js"></script>
+</body>
+</html> 

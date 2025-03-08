@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>搜索结果 - 王导鸡的博客</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* 搜索结果页面特定样式 */
+        .search-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .search-header {
+            margin-bottom: 30px;
+        }
+        
+        .search-info {
+            color: #999;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #2c2c2c;
+        }
+        
+        .search-term {
+            color: #ff9000;
+            font-weight: bold;
+        }
+        
+        .search-count {
+            font-weight: bold;
+        }
+        
+        .search-filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+            background-color: #1c1c1c;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        
+        .search-filter {
+            padding: 5px 10px;
+            background-color: #2c2c2c;
+            color: #f1f1f1;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+        
+        .search-filter.active {
+            background-color: #ff9000;
+            color: #000;
+        }
+        
+        .search-results {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .search-result {
+            background-color: #1c1c1c;
+            padding: 20px;
+            border-radius: 5px;
+            border-left: 3px solid #ff9000;
+            transition: transform 0.3s ease;
+        }
+        
+        .search-result:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(255, 144, 0, 0.2);
+        }
+        
+        .result-type {
+            display: inline-block;
+            padding: 3px 8px;
+            background-color: #2c2c2c;
+            color: #ff9000;
+            border-radius: 3px;
+            font-size: 12px;
+            margin-bottom: 10px;
+        }
+        
+        .result-title {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+        
+        .result-title a {
+            color: #f1f1f1;
+            transition: color 0.3s ease;
+        }
+        
+        .result-title a:hover {
+            color: #ff9000;
+        }
+        
+        .result-excerpt {
+            color: #b0b0b0;
+            margin-bottom: 15px;
+        }
+        
+        .highlight {
+            background-color: rgba(255, 144, 0, 0.2);
+            color: #ff9000;
+            padding: 0 2px;
+        }
+        
+        .result-meta {
+            display: flex;
+            justify-content: space-between;
+            color: #999;
+            font-size: 14px;
+        }
+        
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 40px;
+        }
+        
+        .pagination-btn {
+            padding: 8px 15px;
+            margin: 0 5px;
+            background-color: #2c2c2c;
+            border: none;
+            color: #f1f1f1;
+            border-radius: 3px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .pagination-btn:hover,
+        .pagination-btn.active {
+            background-color: #ff9000;
+            color: #000;
+        }
+        
+        .pagination-btn.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .pagination-btn.disabled:hover {
+            background-color: #2c2c2c;
+            color: #f1f1f1;
+        }
+        
+        .no-results {
+            text-align: center;
+            padding: 50px 0;
+            color: #999;
+        }
+        
+        .no-results h2 {
+            color: #f1f1f1;
+            margin-bottom: 15px;
+            border-bottom: none;
+        }
+        
+        .search-suggestions {
+            margin-top: 30px;
+        }
+        
+        .search-suggestions h3 {
+            color: #ff9000;
+            margin-bottom: 15px;
+        }
+        
+        .suggestion-list {
+            list-style: none;
+        }
+        
+        .suggestion-list li {
+            margin-bottom: 10px;
+        }
+        
+        .suggestion-list a {
+            color: #f1f1f1;
+            transition: color 0.3s ease;
+        }
+        
+        .suggestion-list a:hover {
+            color: #ff9000;
+        }
+        
+        @media (max-width: 768px) {
+            .search-filters {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .result-meta {
+                flex-direction: column;
+                gap: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo-container">
+            <h1 class="logo"><a href="index.html">王导鸡博客</a></h1>
+        </div>
+        <div class="search-container">
+            <input type="text" placeholder="搜索博客内容..." id="header-search">
+            <button id="header-search-btn">搜索</button>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="index.html">首页</a></li>
+                <li><a href="articles.html">文章</a></li>
+                <li><a href="gallery.html">鹿关相册</a></li>
+                <li><a href="about.html">关于我</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="search-container">
+        <div class="search-header">
+            <h1>搜索结果</h1>
+            <div class="search-info">
+                为 "<span class="search-term" id="search-term-display">...</span>" 找到 <span class="search-count" id="result-count">0</span> 个结果
+            </div>
+        </div>
+        
+        <div class="search-filters">
+            <button class="search-filter active" data-filter="all">全部结果</button>
+            <button class="search-filter" data-filter="article">文章</button>
+            <button class="search-filter" data-filter="gallery">照片</button>
+            <button class="search-filter" data-filter="tag">标签</button>
+        </div>
+        
+        <div class="search-results" id="search-results">
+            <!-- 搜索结果将动态添加到这里 -->
+        </div>
+        
+        <div class="pagination">
+            <button class="pagination-btn disabled">&laquo; 上一页</button>
+            <button class="pagination-btn active">1</button>
+            <button class="pagination-btn">2</button>
+            <button class="pagination-btn">下一页 &raquo;</button>
+        </div>
+        
+        <div class="search-suggestions">
+            <h3>你可能也对这些感兴趣：</h3>
+            <ul class="suggestion-list" id="search-suggestions">
+                <!-- 相关推荐将动态添加到这里 -->
+            </ul>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>关于博客</h3>
+                <p>这是王导鸡的个人博客，专注于分享鹿关的美景和相关经历。</p>
+            </div>
+            <div class="footer-section">
+                <h3>联系方式</h3>
+                <p>邮箱: 230299514@qq.com</p>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>&copy; 2023 王导鸡的博客 | 保留所有权利</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script src="search-results.js"></script>
+</body>
+</html> 

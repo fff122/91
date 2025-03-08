@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>鹿关相册 - 王导鸡的博客</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* 相册页特定样式 */
+        .gallery-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .gallery-header {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .gallery-filter {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .gallery-filter-btn {
+            background-color: #2c2c2c;
+            color: #f1f1f1;
+            border: none;
+            padding: 8px 15px;
+            margin: 5px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .gallery-filter-btn:hover,
+        .gallery-filter-btn.active {
+            background-color: #ff9000;
+            color: #000;
+        }
+        
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        
+        .gallery-item {
+            position: relative;
+            overflow: hidden;
+            border-radius: 5px;
+            cursor: pointer;
+            height: 0;
+            padding-bottom: 75%; /* 4:3 比例 */
+        }
+        
+        .gallery-img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        
+        .gallery-item:hover .gallery-img {
+            transform: scale(1.05);
+        }
+        
+        .gallery-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%);
+            color: #fff;
+            padding: 20px;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+        
+        .gallery-item:hover .gallery-overlay {
+            transform: translateY(0);
+        }
+        
+        .gallery-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .gallery-desc {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+        
+        .gallery-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            overflow: auto;
+            padding: 50px 0;
+        }
+        
+        .modal-content {
+            position: relative;
+            max-width: 80%;
+            max-height: 80vh;
+            margin: 0 auto;
+            text-align: center;
+        }
+        
+        .modal-img {
+            max-width: 100%;
+            max-height: 80vh;
+            object-fit: contain;
+            border: 2px solid #333;
+        }
+        
+        .modal-caption {
+            color: #fff;
+            margin-top: 15px;
+            font-size: 16px;
+        }
+        
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 25px;
+            color: #f1f1f1;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .modal-nav {
+            position: absolute;
+            top: 50%;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            transform: translateY(-50%);
+        }
+        
+        .modal-prev,
+        .modal-next {
+            color: #fff;
+            font-size: 30px;
+            background-color: rgba(0, 0, 0, 0.5);
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            margin: 0 20px;
+            transition: background-color 0.3s ease;
+        }
+        
+        .modal-prev:hover,
+        .modal-next:hover {
+            background-color: rgba(255, 144, 0, 0.8);
+        }
+        
+        .load-more-btn {
+            display: block;
+            margin: 40px auto 0;
+            padding: 10px 30px;
+            background-color: #2c2c2c;
+            color: #f1f1f1;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        .load-more-btn:hover {
+            background-color: #ff9000;
+            color: #000;
+        }
+        
+        @media (max-width: 768px) {
+            .gallery-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            }
+            
+            .modal-content {
+                max-width: 95%;
+            }
+            
+            .modal-nav {
+                position: static;
+                margin-top: 20px;
+                transform: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo-container">
+            <h1 class="logo"><a href="index.html">王导鸡博客</a></h1>
+        </div>
+        <div class="search-container">
+            <input type="text" placeholder="搜索博客内容...">
+            <button>搜索</button>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="index.html">首页</a></li>
+                <li><a href="articles.html">文章</a></li>
+                <li><a href="gallery.html" class="active">鹿关相册</a></li>
+                <li><a href="about.html">关于我</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="gallery-container">
+        <div class="gallery-header">
+            <h1>鹿关相册</h1>
+            <p>这里展示了我在鹿关拍摄的精选照片，记录下这片美丽土地的景色和生灵。</p>
+        </div>
+        
+        <div class="gallery-filter">
+            <button class="gallery-filter-btn active" data-filter="all">全部</button>
+            <button class="gallery-filter-btn" data-filter="landscape">风景</button>
+            <button class="gallery-filter-btn" data-filter="wildlife">野生动物</button>
+            <button class="gallery-filter-btn" data-filter="seasons">四季</button>
+            <button class="gallery-filter-btn" data-filter="people">人文</button>
+            <button class="gallery-filter-btn" data-filter="macro">微距</button>
+        </div>
+        
+        <div class="gallery-grid">
+            <div class="gallery-item" data-category="landscape seasons">
+                <img src="img/OIP (1).jpg" alt="秋天的鹿关" class="gallery-img">
+                <div class="gallery-overlay">
+                    <div class="gallery-title">秋天的鹿关</div>
+                    <div class="gallery-desc">金黄色的树叶铺满山谷，远处的群山如画卷般伸展。拍摄于2022年10月。</div>
+                </div>
+            </div>
+            
+            <div class="gallery-item" data-category="wildlife">
+                <img src="img/OIP (2).jpg" alt="山间的鹿" class="gallery-img">
+                <div class="gallery-overlay">
+                    <div class="gallery-title">山间的鹿</div>
+                    <div class="gallery-desc">清晨，一只野鹿在薄雾中觅食。使用600mm长焦镜头拍摄。</div>
+                </div>
+            </div>
+            
+            <div class="gallery-item" data-category="landscape">
+                <img src="img/OIP (3).jpg" alt="鹿关日出" class="gallery-img">
+                <div class="gallery-overlay">
+                    <div class="gallery-title">鹿关日出</div>
+                    <div class="gallery-desc">清晨的第一缕阳光穿透云层，洒在山谷中。这是我最喜欢的拍摄地点之一。</div>
+                </div>
+            </div>
+            
+            <div class="gallery-item" data-category="wildlife macro">
+                <img src="img/OIP (4).jpg" alt="鹿关蝴蝶" class="gallery-img">
+                <div class="gallery-overlay">
+                    <div class="gallery-title">鹿关蝴蝶</div>
+                    <div class="gallery-desc">一只蓝色的蝴蝶停在野花上。使用微距镜头拍摄，捕捉到了细腻的翅膀纹理。</div>
+                </div>
+            </div>
+            
+            <div class="gallery-item" data-category="landscape seasons">
+                <img src="img/OIP (5).jpg" alt="冬日鹿关" class="gallery-img">
+                <div class="gallery-overlay">
+                    <div class="gallery-title">冬日鹿关</div>
+                    <div class="gallery-desc">大雪覆盖了整个山谷，仿佛置身童话世界。拍摄于2023年1月的一场大雪后。</div>
+                </div>
+            </div>
+            
+            <div class="gallery-item" data-category="people">
+                <img src="img/OIP (6).jpg" alt="鹿关居民" class="gallery-img">
+                <div class="gallery-overlay">
+                    <div class="gallery-title">鹿关居民</div>
+                    <div class="gallery-desc">一位当地老人正在编织传统竹篮。这是一门即将失传的手艺。</div>
+                </div>
+            </div>
+            
+            <div class="gallery-item" data-category="landscape seasons">
+                <img src="img/OIP (7).jpg" alt="春日鹿关" class="gallery-img">
+                <div class="gallery-overlay">
+                    <div class="gallery-title">春日鹿关</div>
+                    <div class="gallery-desc">春天的鹿关，山花烂漫，生机勃勃。拍摄于2023年4月。</div>
+                </div>
+            </div>
+            
+            <div class="gallery-item" data-category="wildlife">
+                <img src="img/OIP (8).jpg" alt="鹿关鸟类" class="gallery-img">
+                <div class="gallery-overlay">
+                    <div class="gallery-title">鹿关鸟类</div>
+                    <div class="gallery-desc">一只罕见的蓝喉蜂虎在树枝上栖息。耐心等待了三个小时才拍到这一瞬间。</div>
+                </div>
+            </div>
+            
+            <div class="gallery-item" data-category="macro">
+                <img src="img/OIP (9).jpg" alt="晨露" class="gallery-img">
+                <div class="gallery-overlay">
+                    <div class="gallery-title">晨露</div>
+                    <div class="gallery-desc">清晨的露珠在蜘蛛网上闪烁。使用微距镜头拍摄，ISO 100，光圈f/8。</div>
+                </div>
+            </div>
+            
+            <div class="gallery-item" data-category="landscape seasons">
+                <img src="img/OIP (10).jpg" alt="夏日鹿关" class="gallery-img">
+                <div class="gallery-overlay">
+                    <div class="gallery-title">夏日鹿关</div>
+                    <div class="gallery-desc">夏季的鹿关，山间瀑布清凉宜人。这是避暑的好去处。</div>
+                </div>
+            </div>
+            
+            <div class="gallery-item" data-category="people">
+                <img src="img/OIP (11).jpg" alt="守望者" class="gallery-img">
+                <div class="gallery-overlay">
+                    <div class="gallery-title">守望者</div>
+                    <div class="gallery-desc">一位护林员在山顶远眺。这些守护者日复一日地保护着鹿关的生态环境。</div>
+                </div>
+            </div>
+            
+            <div class="gallery-item" data-category="landscape">
+                <img src="img/OIP (12).jpg" alt="鹿关星空" class="gallery-img">
+                <div class="gallery-overlay">
+                    <div class="gallery-title">鹿关星空</div>
+                    <div class="gallery-desc">远离城市光污染的鹿关，是观星的绝佳地点。这是银河的长曝光照片。</div>
+                </div>
+            </div>
+        </div>
+        
+        <button class="load-more-btn">加载更多照片</button>
+    </main>
+    
+    <!-- 照片模态框 -->
+    <div class="gallery-modal" id="photoModal">
+        <span class="modal-close">&times;</span>
+        <div class="modal-content">
+            <img src="" alt="" class="modal-img" id="modalImg">
+            <div class="modal-caption" id="modalCaption"></div>
+            <div class="modal-nav">
+                <button class="modal-prev">&lt;</button>
+                <button class="modal-next">&gt;</button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>关于博客</h3>
+                <p>这是王导鸡的个人博客，专注于分享鹿关的美景和相关经历。</p>
+            </div>
+            <div class="footer-section">
+                <h3>联系方式</h3>
+                <p>邮箱: 230299514@qq.com</p>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>&copy; 2023 王导鸡的博客 | 保留所有权利</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        // 相册页面特定脚本
+        document.addEventListener('DOMContentLoaded', function() {
+            // 图片筛选功能
+            const filterBtns = document.querySelectorAll('.gallery-filter-btn');
+            const galleryItems = document.querySelectorAll('.gallery-item');
+            
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // 移除所有按钮的active类
+                    filterBtns.forEach(b => b.classList.remove('active'));
+                    
+                    // 给当前点击的按钮添加active类
+                    this.classList.add('active');
+                    
+                    // 获取筛选值
+                    const filterValue = this.getAttribute('data-filter');
+                    
+                    // 筛选图片
+                    galleryItems.forEach(item => {
+                        if (filterValue === 'all' || item.getAttribute('data-category').includes(filterValue)) {
+                            item.style.display = 'block';
+                        } else {
+                            item.style.display = 'none';
+                        }
+                    });
+                });
+            });
+            
+            // 照片模态框功能
+            const modal = document.getElementById('photoModal');
+            const modalImg = document.getElementById('modalImg');
+            const modalCaption = document.getElementById('modalCaption');
+            const closeBtn = document.querySelector('.modal-close');
+            const prevBtn = document.querySelector('.modal-prev');
+            const nextBtn = document.querySelector('.modal-next');
+            
+            let currentIndex = 0;
+            const visibleItems = () => Array.from(galleryItems).filter(item => item.style.display !== 'none');
+            
+            // 打开模态框
+            galleryItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    modal.style.display = 'block';
+                    
+                    const img = this.querySelector('.gallery-img');
+                    const title = this.querySelector('.gallery-title').textContent;
+                    const desc = this.querySelector('.gallery-desc').textContent;
+                    
+                    modalImg.src = img.src;
+                    modalImg.alt = img.alt;
+                    modalCaption.innerHTML = `<strong>${title}</strong><br>${desc}`;
+                    
+                    // 设置当前索引
+                    currentIndex = visibleItems().indexOf(this);
+                });
+            });
+            
+            // 关闭模态框
+            closeBtn.addEventListener('click', function() {
+                modal.style.display = 'none';
+            });
+            
+            // 点击模态框背景关闭
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+            
+            // 上一张图片
+            prevBtn.addEventListener('click', function() {
+                const items = visibleItems();
+                currentIndex = (currentIndex - 1 + items.length) % items.length;
+                
+                const item = items[currentIndex];
+                const img = item.querySelector('.gallery-img');
+                const title = item.querySelector('.gallery-title').textContent;
+                const desc = item.querySelector('.gallery-desc').textContent;
+                
+                modalImg.src = img.src;
+                modalImg.alt = img.alt;
+                modalCaption.innerHTML = `<strong>${title}</strong><br>${desc}`;
+            });
+            
+            // 下一张图片
+            nextBtn.addEventListener('click', function() {
+                const items = visibleItems();
+                currentIndex = (currentIndex + 1) % items.length;
+                
+                const item = items[currentIndex];
+                const img = item.querySelector('.gallery-img');
+                const title = item.querySelector('.gallery-title').textContent;
+                const desc = item.querySelector('.gallery-desc').textContent;
+                
+                modalImg.src = img.src;
+                modalImg.alt = img.alt;
+                modalCaption.innerHTML = `<strong>${title}</strong><br>${desc}`;
+            });
+            
+            // 键盘导航
+            document.addEventListener('keydown', function(e) {
+                if (modal.style.display === 'block') {
+                    if (e.key === 'ArrowLeft') {
+                        prevBtn.click();
+                    } else if (e.key === 'ArrowRight') {
+                        nextBtn.click();
+                    } else if (e.key === 'Escape') {
+                        modal.style.display = 'none';
+                    }
+                }
+            });
+            
+            // 加载更多按钮
+            const loadMoreBtn = document.querySelector('.load-more-btn');
+            
+            loadMoreBtn.addEventListener('click', function() {
+                // 这里应该是实际加载更多图片的代码
+                // 这里只做示例，模拟加载中状态
+                this.textContent = '加载中...';
+                this.disabled = true;
+                
+                setTimeout(() => {
+                    // 模拟添加6张新照片
+                    for (let i = 0; i < 6; i++) {
+                        addNewGalleryItem();
+                    }
+                    
+                    this.textContent = '加载更多照片';
+                    this.disabled = false;
+                    
+                    // 如果已加载足够多的照片，隐藏按钮
+                    if (document.querySelectorAll('.gallery-item').length >= 30) {
+                        this.style.display = 'none';
+                        
+                        // 添加"已显示全部照片"的提示
+                        const noMoreText = document.createElement('p');
+                        noMoreText.textContent = '已显示全部照片';
+                        noMoreText.style.textAlign = 'center';
+                        noMoreText.style.color = '#999';
+                        noMoreText.style.margin = '30px 0';
+                        
+                        this.parentNode.appendChild(noMoreText);
+                    }
+                }, 1500);
+            });
+            
+            // 模拟添加新的相册项目
+            function addNewGalleryItem() {
+                const categories = ['landscape', 'wildlife', 'seasons', 'people', 'macro'];
+                const titles = ['鹿关溪流', '山间小鹿', '雾中鹿关', '鹿关渔民', '山花特写', '鹿关日落'];
+                const descriptions = [
+                    '清澈的溪水流过鹿关山谷，滋养着这片土地上的生灵。',
+                    '一群小鹿在山间奔跑，展现了生命的活力。',
+                    '晨雾中的鹿关，仿佛仙境一般神秘。',
+                    '当地渔民在小溪边垂钓，展现了人与自然的和谐共处。',
+                    '鹿关特有的山花，色彩艳丽，生命力顽强。',
+                    '夕阳西下，金色的光芒洒在鹿关的山峦上。'
+                ];
+                
+                // 随机选择图片路径 - 从img目录中选择
+                const imageFiles = [
+                    'img/OIP (13).jpg', 'img/OIP (14).jpg', 'img/OIP (15).jpg',
+                    'img/OIP (16).jpg', 'img/OIP (17).jpg', 'img/OIP (18).jpg',
+                    'img/OIP (19).jpg', 'img/OIP (20).jpg', 'img/OIP (21).jpg',
+                    'img/OIP (22).jpg', 'img/OIP (23).jpg', 'img/OIP (24).jpg'
+                ];
+                
+                // 随机选择类别、标题、描述和图片
+                const randomCategory = categories[Math.floor(Math.random() * categories.length)];
+                const randomIndex = Math.floor(Math.random() * titles.length);
+                const randomImage = imageFiles[Math.floor(Math.random() * imageFiles.length)];
+                
+                const galleryGrid = document.querySelector('.gallery-grid');
+                
+                const newItem = document.createElement('div');
+                newItem.className = 'gallery-item';
+                newItem.setAttribute('data-category', randomCategory);
+                newItem.style.opacity = '0';
+                newItem.style.transition = 'opacity 1s ease';
+                
+                newItem.innerHTML = `
+                    <img src="${randomImage}" alt="${titles[randomIndex]}" class="gallery-img">
+                    <div class="gallery-overlay">
+                        <div class="gallery-title">${titles[randomIndex]}</div>
+                        <div class="gallery-desc">${descriptions[randomIndex]}</div>
+                    </div>
+                `;
+                
+                galleryGrid.appendChild(newItem);
+                
+                // 添加点击事件
+                newItem.addEventListener('click', function() {
+                    modal.style.display = 'block';
+                    
+                    const img = this.querySelector('.gallery-img');
+                    const title = this.querySelector('.gallery-title').textContent;
+                    const desc = this.querySelector('.gallery-desc').textContent;
+                    
+                    modalImg.src = img.src;
+                    modalImg.alt = img.alt;
+                    modalCaption.innerHTML = `<strong>${title}</strong><br>${desc}`;
+                    
+                    // 设置当前索引
+                    currentIndex = visibleItems().indexOf(this);
+                });
+                
+                // 淡入效果
+                setTimeout(() => {
+                    newItem.style.opacity = '1';
+                }, 100);
+                
+                // 应用当前的筛选
+                const activeFilter = document.querySelector('.gallery-filter-btn.active');
+                const filterValue = activeFilter.getAttribute('data-filter');
+                
+                if (filterValue !== 'all' && !newItem.getAttribute('data-category').includes(filterValue)) {
+                    newItem.style.display = 'none';
+                }
+            }
+        });
+    </script>
+</body>
+</html> 

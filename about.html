@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>关于我 - 王导鸡的博客</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* 关于页面特定样式 */
+        .about-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .about-header {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .profile-photo {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            border: 3px solid #ff9000;
+            object-fit: cover;
+            margin: 0 auto 20px;
+            display: block;
+        }
+        
+        .about-content {
+            line-height: 1.8;
+            color: #f1f1f1;
+        }
+        
+        .about-content p {
+            margin-bottom: 20px;
+        }
+        
+        .about-content h2 {
+            margin: 30px 0 15px;
+            color: #ff9000;
+            border-bottom: none;
+        }
+        
+        .skills-container {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+        
+        .skill-bar {
+            flex: 1;
+            min-width: 200px;
+            margin-right: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .skill-name {
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        .skill-level {
+            height: 10px;
+            background-color: #2c2c2c;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        
+        .skill-progress {
+            height: 100%;
+            background-color: #ff9000;
+        }
+        
+        .contact-form {
+            background-color: #1c1c1c;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #f1f1f1;
+        }
+        
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            background-color: #2c2c2c;
+            border: none;
+            border-radius: 5px;
+            color: #f1f1f1;
+        }
+        
+        .form-group textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+        
+        .submit-btn {
+            background-color: #ff9000;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        .submit-btn:hover {
+            background-color: #ffac3a;
+        }
+        
+        .timeline {
+            position: relative;
+            max-width: 1200px;
+            margin: 20px 0;
+        }
+        
+        .timeline::after {
+            content: '';
+            position: absolute;
+            width: 6px;
+            background-color: #2c2c2c;
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            margin-left: -3px;
+        }
+        
+        .timeline-container {
+            padding: 10px 40px;
+            position: relative;
+            background-color: inherit;
+            width: 50%;
+        }
+        
+        .timeline-container::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            right: -10px;
+            background-color: #ff9000;
+            border: 4px solid #ff9000;
+            top: 15px;
+            border-radius: 50%;
+            z-index: 1;
+        }
+        
+        .left {
+            left: 0;
+        }
+        
+        .right {
+            left: 50%;
+        }
+        
+        .left::after {
+            right: -10px;
+        }
+        
+        .right::after {
+            left: -10px;
+        }
+        
+        .timeline-content {
+            padding: 20px;
+            background-color: #1c1c1c;
+            position: relative;
+            border-radius: 5px;
+        }
+        
+        .timeline-year {
+            color: #ff9000;
+            font-weight: bold;
+        }
+        
+        @media screen and (max-width: 600px) {
+            .timeline::after {
+                left: 31px;
+            }
+            
+            .timeline-container {
+                width: 100%;
+                padding-left: 70px;
+                padding-right: 25px;
+            }
+            
+            .timeline-container::after {
+                left: 15px;
+            }
+            
+            .left::after, .right::after {
+                left: 15px;
+            }
+            
+            .right {
+                left: 0%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo-container">
+            <h1 class="logo"><a href="index.html">王导鸡博客</a></h1>
+        </div>
+        <div class="search-container">
+            <input type="text" placeholder="搜索博客内容...">
+            <button>搜索</button>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="index.html">首页</a></li>
+                <li><a href="articles.html">文章</a></li>
+                <li><a href="gallery.html">鹿关相册</a></li>
+                <li><a href="about.html" class="active">关于我</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="about-container">
+        <div class="about-header">
+            <img src="img/OIP (15).jpg" alt="王导鸡的照片" class="profile-photo">
+            <h1>王导鸡</h1>
+            <p>摄影爱好者 | 旅行博主 | 鹿关专家</p>
+        </div>
+        
+        <div class="about-content">
+            <p>欢迎来到我的博客！我是<strong>王导鸡</strong>，一个痴迷于鹿关自然风光的自由摄影师和旅行爱好者。在过去的十年里，我走遍了鹿关的每一个角落，记录下这个地方四季的变化和独特的生态系统。</p>
+            
+            <p>这个博客是我分享鹿关故事和经验的地方。无论你是计划第一次前往鹿关，还是和我一样的"鹿关控"，我希望我的内容能给你带来启发和帮助。</p>
+            
+            <h2>我的故事</h2>
+            
+            <div class="timeline">
+                <div class="timeline-container left">
+                    <div class="timeline-content">
+                        <span class="timeline-year">2013年</span>
+                        <p>第一次踏入鹿关，被这里的自然风光深深吸引。决定用相机记录下我看到的一切。</p>
+                    </div>
+                </div>
+                <div class="timeline-container right">
+                    <div class="timeline-content">
+                        <span class="timeline-year">2015年</span>
+                        <p>辞去城市的工作，成为一名自由摄影师，每年有一半的时间住在鹿关周边。</p>
+                    </div>
+                </div>
+                <div class="timeline-container left">
+                    <div class="timeline-content">
+                        <span class="timeline-year">2018年</span>
+                        <p>出版第一本鹿关摄影集《鹿的四季》，获得地方摄影奖。</p>
+                    </div>
+                </div>
+                <div class="timeline-container right">
+                    <div class="timeline-content">
+                        <span class="timeline-year">2020年</span>
+                        <p>创建这个博客，希望能让更多人了解鹿关的美丽与价值。</p>
+                    </div>
+                </div>
+                <div class="timeline-container left">
+                    <div class="timeline-content">
+                        <span class="timeline-year">2023年</span>
+                        <p>目前正在筹备第二本摄影集，并计划举办线下鹿关摄影展。</p>
+                    </div>
+                </div>
+            </div>
+            
+            <h2>我的专长</h2>
+            
+            <div class="skills-container">
+                <div class="skill-bar">
+                    <div class="skill-name">风景摄影</div>
+                    <div class="skill-level">
+                        <div class="skill-progress" style="width: 95%;"></div>
+                    </div>
+                </div>
+                
+                <div class="skill-bar">
+                    <div class="skill-name">野生动物摄影</div>
+                    <div class="skill-level">
+                        <div class="skill-progress" style="width: 90%;"></div>
+                    </div>
+                </div>
+                
+                <div class="skill-bar">
+                    <div class="skill-name">生态保护知识</div>
+                    <div class="skill-level">
+                        <div class="skill-progress" style="width: 85%;"></div>
+                    </div>
+                </div>
+                
+                <div class="skill-bar">
+                    <div class="skill-name">旅行规划</div>
+                    <div class="skill-level">
+                        <div class="skill-progress" style="width: 88%;"></div>
+                    </div>
+                </div>
+                
+                <div class="skill-bar">
+                    <div class="skill-name">徒步向导</div>
+                    <div class="skill-level">
+                        <div class="skill-progress" style="width: 92%;"></div>
+                    </div>
+                </div>
+                
+                <div class="skill-bar">
+                    <div class="skill-name">写作</div>
+                    <div class="skill-level">
+                        <div class="skill-progress" style="width: 80%;"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <h2>我的设备</h2>
+            
+            <p>作为一个摄影师，我的装备很重要。这里是我常用的器材清单：</p>
+            
+            <ul style="margin-left: 20px; margin-bottom: 20px;">
+                <li>相机: 索尼 A7R IV，尼康 Z7</li>
+                <li>镜头: 24-70mm f/2.8，70-200mm f/2.8，16-35mm f/4，150-600mm f/5-6.3</li>
+                <li>三脚架: Gitzo GT3532LS</li>
+                <li>滤镜系统: LEE 100mm 系统</li>
+                <li>其他: DJI Mavic 3 Pro (航拍)</li>
+            </ul>
+            
+            <h2>联系我</h2>
+            
+            <p>如果你有关于鹿关的问题，或者想要合作，欢迎联系我：</p>
+            
+            <ul style="margin-left: 20px; margin-bottom: 20px;">
+                <li>邮箱: 230299514@qq.com</li>
+            </ul>
+            
+            <p>或者，你可以直接给我留言：</p>
+            
+            <form class="contact-form">
+                <div class="form-group">
+                    <label for="name">姓名</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">邮箱</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="subject">主题</label>
+                    <input type="text" id="subject" name="subject" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="message">留言</label>
+                    <textarea id="message" name="message" required></textarea>
+                </div>
+                
+                <button type="submit" class="submit-btn">发送留言</button>
+            </form>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>关于博客</h3>
+                <p>这是王导鸡的个人博客，专注于分享鹿关的美景和相关经历。</p>
+            </div>
+            <div class="footer-section">
+                <h3>联系方式</h3>
+                <p>邮箱: 230299514@qq.com</p>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>&copy; 2023 王导鸡的博客 | 保留所有权利</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html> 
